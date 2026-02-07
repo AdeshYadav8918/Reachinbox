@@ -33,8 +33,8 @@ api.interceptors.response.use(
                     data: {
                         user: {
                             id: 999,
-                            email: 'offline_user@demo.com',
-                            name: 'Demo User (Offline)',
+                            email: 'guest@example.com',
+                            name: 'Guest User',
                             avatar: 'https://via.placeholder.com/150'
                         }
                     }
@@ -47,6 +47,47 @@ api.interceptors.response.use(
                 // We can't easily mock the redirect behavior here without changing the calling code,
                 // but we can prevent the crash.
                 return Promise.resolve({ data: { message: 'Offline mode guest login' } });
+            }
+
+            // Mock Campaign Stats
+            if (url === '/api/campaigns/stats') {
+                return Promise.resolve({
+                    data: {
+                        stats: {
+                            total: 1250,
+                            sent: 980,
+                            failed: 20,
+                            scheduled: 150,
+                            queued: 100
+                        }
+                    }
+                });
+            }
+
+            // Mock Scheduled Emails
+            if (url === '/api/campaigns/emails/scheduled') {
+                return Promise.resolve({
+                    data: {
+                        emails: [
+                            { id: 1, subject: 'Q4 Marketing Outreach', recipient: 'client@example.com', status: 'scheduled', scheduled_time: new Date(Date.now() + 86400000).toISOString() },
+                            { id: 2, subject: 'Partnership Proposal', recipient: 'partner@tech.com', status: 'queued', scheduled_time: new Date(Date.now() + 172800000).toISOString() },
+                            { id: 3, subject: 'Follow-up Meeting', recipient: 'lead@sales.com', status: 'scheduled', scheduled_time: new Date(Date.now() + 3600000).toISOString() },
+                        ]
+                    }
+                });
+            }
+
+            // Mock Sent Emails
+            if (url === '/api/campaigns/emails/sent') {
+                return Promise.resolve({
+                    data: {
+                        emails: [
+                            { id: 101, subject: 'Welcome to ReachInbox', recipient: 'newuser@demo.com', status: 'sent', sent_at: new Date(Date.now() - 86400000).toISOString() },
+                            { id: 102, subject: 'Your Trial Has Started', recipient: 'trial@demo.com', status: 'sent', sent_at: new Date(Date.now() - 172800000).toISOString() },
+                            { id: 103, subject: 'Invalid Email Test', recipient: 'bad@add.ress', status: 'failed', sent_at: new Date(Date.now() - 200000).toISOString() },
+                        ]
+                    }
+                });
             }
         }
         return Promise.reject(error);
