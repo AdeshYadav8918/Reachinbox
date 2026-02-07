@@ -1,14 +1,17 @@
 import { authAPI } from '../../services/api';
 import { CardBody, CardContainer, CardItem } from '../ui/3d-card';
 import { Mail } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 export const LoginPage = () => {
+    const { loginAsGuest } = useAuth();
+
     const handleGoogleLogin = () => {
         window.location.href = authAPI.loginUrl;
     };
 
     const handleGuestLogin = () => {
-        window.location.href = authAPI.guestLoginUrl;
+        loginAsGuest();
     };
 
     return (

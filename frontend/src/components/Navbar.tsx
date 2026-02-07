@@ -56,10 +56,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
             <div className="p-4 border-t border-gray-100 dark:border-white/[0.1]">
                 <div className="flex items-center gap-3 mb-4 px-2">
                     {user?.avatar ? (
-                        <img src={user.avatar} alt={user.name} className="h-9 w-9 rounded-full ring-2 ring-white dark:ring-gray-800 shadow-sm" />
+                        <img src={user.avatar} alt={user.name} className="h-9 w-9 rounded-full ring-2 ring-white dark:ring-gray-800 shadow-sm object-cover" />
                     ) : (
-                        <div className="h-9 w-9 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-300 font-bold">
-                            {user?.name?.[0]}
+                        <div className="h-9 w-9 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-300 font-bold uppercase select-none">
+                            {user?.name?.charAt(0) || 'U'}
                         </div>
                     )}
                     <div className="hidden lg:block overflow-hidden">
