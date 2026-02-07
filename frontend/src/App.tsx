@@ -27,13 +27,17 @@ const Dashboard = () => {
       const res = await api.get(endpoint);
       setEmails(res.data.emails);
 
-      // Calculate simple stats based on current view (in a real app, fetch from stats API)
-      const currentEmails = res.data.emails;
+      setEmails(res.data.emails);
+
+      // Fetch stats from backend
+      const statsRes = await api.get('/api/campaigns/stats');
+      const backendStats = statsRes.data.stats;
+
       setStats({
-        total: currentEmails.length,
-        pending: currentEmails.filter((e: any) => e.status === 'scheduled' || e.status === 'queued').length,
-        sent: currentEmails.filter((e: any) => e.status === 'sent').length,
-        failed: currentEmails.filter((e: any) => e.status === 'failed').length
+        total: backendStats.total,
+        pending: backendStats.scheduled + backendStats.queued,
+        sent: backendStats.sent,
+        failed: backendStats.failed
       });
 
     } catch (error) {

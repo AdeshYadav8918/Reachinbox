@@ -68,3 +68,11 @@ export interface CreateCampaignRequest {
   delay_between_emails_ms: number;
   hourly_limit: number;
 }
+
+export interface CampaignStats {
+  total: number;
+  sent: number;
+  failed: number;
+  scheduled: number;
+  queued: number;
+}

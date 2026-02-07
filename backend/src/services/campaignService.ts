@@ -1,7 +1,7 @@
 import { getDbPool } from '../db/connection';
 import { scheduleEmail } from '../queues/emailQueue';
 import logger from '../utils/logger';
-import { CreateCampaignRequest, EmailCampaign, ScheduledEmail } from '../types';
+import { CreateCampaignRequest, EmailCampaign, ScheduledEmail, CampaignStats } from '../types';
 
 export const createCampaign = async (
   userId: number,
@@ -193,3 +193,46 @@ export const getSentEmails = async (userId: number): Promise<ScheduledEmail[]> =
 
   return emails;
 };
+
+export const getCampaignStats = async (userId: number): Promise<CampaignStats> => {
+  const pool = getDbPool();
+
+  const [rows] = await pool.query<any[]>(
+    `SELECT status, COUNT(*) as count 
+     FROM scheduled_emails 
+     WHERE user_id = ? 
+     GROUP BY status`,
+    [userId]
+  );
+
+  const stats = {
+    total: 0,
+    sent: 0,
+    failed: 0,
+    scheduled: 0,
+    queued: 0,
+  };
+
+  rows.forEach((row: any) => {
+    const count = row.count;
+    stats.total += count;
+
+    switch (row.status) {
+      case 'sent':
+        stats.sent = row.count;
+        break;
+      case 'failed':
+        stats.failed = row.count;
+        break;
+      case 'scheduled':
+        stats.scheduled = row.count;
+        break;
+      case 'queued':
+        stats.queued = row.count;
+        break;
+    }
+  });
+
+  return stats;
+};
+

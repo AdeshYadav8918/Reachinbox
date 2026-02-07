@@ -1,16 +1,33 @@
-import { Router } from 'express';
+import { Router, Request } from 'express';
 import { body, validationResult } from 'express-validator';
-import { isAuthenticated, AuthenticatedRequest } from '../middleware/auth';
+import { isAuthenticated } from '../middleware/auth';
 import {
   createCampaign,
   getCampaigns,
   getCampaignById,
   getScheduledEmails,
   getSentEmails,
+  getCampaignStats,
 } from '../services/campaignService';
 import logger from '../utils/logger';
 
 const router = Router();
+
+// Get campaign stats
+router.get('/stats', isAuthenticated, async (req: Request, res) => {
+  try {
+    const userId = req.user!.id;
+    const stats = await getCampaignStats(userId);
+
+    res.json({ stats });
+  } catch (error: any) {
+    logger.error('Error fetching campaign stats:', error);
+    res.status(500).json({
+      error: 'Failed to fetch campaign stats',
+      message: error.message,
+    });
+  }
+});
 
 // Validation middleware
 const validateCampaign = [
@@ -34,7 +51,7 @@ router.post(
   '/',
   isAuthenticated,
   validateCampaign,
-  async (req: AuthenticatedRequest, res) => {
+  async (req: Request, res) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -44,13 +61,13 @@ router.post(
       const userId = req.user!.id;
       const campaign = await createCampaign(userId, req.body);
 
-      res.status(201).json({
+      return res.status(201).json({
         message: 'Campaign created successfully',
         campaign,
       });
     } catch (error: any) {
       logger.error('Error creating campaign:', error);
-      res.status(500).json({
+      return res.status(500).json({
         error: 'Failed to create campaign',
         message: error.message,
       });
@@ -59,15 +76,15 @@ router.post(
 );
 
 // Get all campaigns for user
-router.get('/', isAuthenticated, async (req: AuthenticatedRequest, res) => {
+router.get('/', isAuthenticated, async (req: Request, res) => {
   try {
     const userId = req.user!.id;
     const campaigns = await getCampaigns(userId);
 
-    res.json({ campaigns });
+    return res.json({ campaigns });
   } catch (error: any) {
     logger.error('Error fetching campaigns:', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Failed to fetch campaigns',
       message: error.message,
     });
@@ -75,7 +92,7 @@ router.get('/', isAuthenticated, async (req: AuthenticatedRequest, res) => {
 });
 
 // Get campaign by ID
-router.get('/:id', isAuthenticated, async (req: AuthenticatedRequest, res) => {
+router.get('/:id', isAuthenticated, async (req: Request, res) => {
   try {
     const userId = req.user!.id;
     const campaignId = parseInt(req.params.id, 10);
@@ -86,10 +103,10 @@ router.get('/:id', isAuthenticated, async (req: AuthenticatedRequest, res) => {
       return res.status(404).json({ error: 'Campaign not found' });
     }
 
-    res.json({ campaign });
+    return res.json({ campaign });
   } catch (error: any) {
     logger.error('Error fetching campaign:', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Failed to fetch campaign',
       message: error.message,
     });
@@ -97,15 +114,15 @@ router.get('/:id', isAuthenticated, async (req: AuthenticatedRequest, res) => {
 });
 
 // Get scheduled emails
-router.get('/emails/scheduled', isAuthenticated, async (req: AuthenticatedRequest, res) => {
+router.get('/emails/scheduled', isAuthenticated, async (req: Request, res) => {
   try {
     const userId = req.user!.id;
     const emails = await getScheduledEmails(userId);
 
-    res.json({ emails });
+    return res.json({ emails });
   } catch (error: any) {
     logger.error('Error fetching scheduled emails:', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Failed to fetch scheduled emails',
       message: error.message,
     });
@@ -113,15 +130,15 @@ router.get('/emails/scheduled', isAuthenticated, async (req: AuthenticatedReques
 });
 
 // Get sent emails
-router.get('/emails/sent', isAuthenticated, async (req: AuthenticatedRequest, res) => {
+router.get('/emails/sent', isAuthenticated, async (req: Request, res) => {
   try {
     const userId = req.user!.id;
     const emails = await getSentEmails(userId);
 
-    res.json({ emails });
+    return res.json({ emails });
   } catch (error: any) {
     logger.error('Error fetching sent emails:', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Failed to fetch sent emails',
       message: error.message,
     });

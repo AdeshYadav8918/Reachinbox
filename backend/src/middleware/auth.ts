@@ -1,14 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import logger from '../utils/logger';
 
-export interface AuthenticatedRequest extends Request {
-  user?: {
-    id: number;
-    email: string;
-    name: string;
-    avatar?: string;
-  };
+import { User as AppUser } from '../types';
+
+declare global {
+  namespace Express {
+    interface User extends AppUser { }
+  }
 }
+
+export type AuthenticatedRequest = Request;
+
 
 export const isAuthenticated = (
   req: AuthenticatedRequest,
