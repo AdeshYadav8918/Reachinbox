@@ -7,15 +7,8 @@ export const LoginPage = () => {
         window.location.href = authAPI.loginUrl;
     };
 
-    const handleGuestLogin = async () => {
-        try {
-            await authAPI.guestLogin();
-            window.location.href = '/dashboard';
-        } catch (error) {
-            console.error("Guest login failed", error);
-            // Even if it fails (and interceptor didn't catch it for some reason), try to go to dashboard
-            window.location.href = '/dashboard';
-        }
+    const handleGuestLogin = () => {
+        window.location.href = authAPI.guestLoginUrl;
     };
 
     return (
