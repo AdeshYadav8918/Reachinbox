@@ -1,4 +1,4 @@
-import { Router, Request } from 'express';
+import { Router, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { isAuthenticated } from '../middleware/auth';
 import {
@@ -14,7 +14,7 @@ import logger from '../utils/logger';
 const router = Router();
 
 // Get campaign stats
-router.get('/stats', isAuthenticated, async (req: Request, res) => {
+router.get('/stats', isAuthenticated, async (req: Request, res: Response) => {
   try {
     const userId = req.user!.id;
     const stats = await getCampaignStats(userId);
@@ -51,7 +51,7 @@ router.post(
   '/',
   isAuthenticated,
   validateCampaign,
-  async (req: Request, res) => {
+  async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -76,7 +76,7 @@ router.post(
 );
 
 // Get all campaigns for user
-router.get('/', isAuthenticated, async (req: Request, res) => {
+router.get('/', isAuthenticated, async (req: Request, res: Response) => {
   try {
     const userId = req.user!.id;
     const campaigns = await getCampaigns(userId);
@@ -92,7 +92,7 @@ router.get('/', isAuthenticated, async (req: Request, res) => {
 });
 
 // Get campaign by ID
-router.get('/:id', isAuthenticated, async (req: Request, res) => {
+router.get('/:id', isAuthenticated, async (req: Request, res: Response) => {
   try {
     const userId = req.user!.id;
     const campaignId = parseInt(req.params.id, 10);
@@ -114,7 +114,7 @@ router.get('/:id', isAuthenticated, async (req: Request, res) => {
 });
 
 // Get scheduled emails
-router.get('/emails/scheduled', isAuthenticated, async (req: Request, res) => {
+router.get('/emails/scheduled', isAuthenticated, async (req: Request, res: Response) => {
   try {
     const userId = req.user!.id;
     const emails = await getScheduledEmails(userId);
@@ -130,7 +130,7 @@ router.get('/emails/scheduled', isAuthenticated, async (req: Request, res) => {
 });
 
 // Get sent emails
-router.get('/emails/sent', isAuthenticated, async (req: Request, res) => {
+router.get('/emails/sent', isAuthenticated, async (req: Request, res: Response) => {
   try {
     const userId = req.user!.id;
     const emails = await getSentEmails(userId);
