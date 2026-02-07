@@ -9,15 +9,11 @@ export const LoginPage = () => {
 
     const handleGuestLogin = async () => {
         try {
-            // Attempt to hit the guest login route. 
-            // If backend is online, it might redirect (which axios follows or we handle).
-            // If offline, our interceptor returns mock data.
             await authAPI.guestLogin();
-            // Force navigation to dashboard since we are "logged in" (either real or mock)
             window.location.href = '/dashboard';
         } catch (error) {
             console.error("Guest login failed", error);
-            // Fallback for offline if interceptor didn't catch it
+            // Even if it fails (and interceptor didn't catch it for some reason), try to go to dashboard
             window.location.href = '/dashboard';
         }
     };
@@ -89,18 +85,6 @@ export const LoginPage = () => {
                                 className="w-full rounded-xl bg-gray-100 px-4 py-3 text-sm font-semibold text-gray-900 duration-200 hover:bg-gray-200 transition-colors"
                             >
                                 Guest Access (Skip Login)
-                            </button>
-                        </CardItem>
-
-                        <CardItem translateZ="90" className="w-full mt-4">
-                            <button
-                                onClick={() => {
-                                    localStorage.setItem('demo_mode', 'true');
-                                    window.location.href = '/dashboard';
-                                }}
-                                className="w-full rounded-xl border border-indigo-600 px-4 py-3 text-sm font-semibold text-indigo-600 duration-200 hover:bg-indigo-50 transition-colors dark:text-indigo-400 dark:hover:bg-indigo-900/20"
-                            >
-                                View Demo (Frontend Only)
                             </button>
                         </CardItem>
                     </div>
