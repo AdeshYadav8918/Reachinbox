@@ -48,18 +48,35 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    // Check if we are in demo mode
+    const isDemo = localStorage.getItem('demo_mode') === 'true';
+    if (isDemo && !user) {
+      // Mock user for demo mode
+      // We manually set the user in the auth context? 
+      // Since useAuth is a hook, we might need to update the hook instead.
+      // However, for simplicity in this file, we can just bypass the check if we modify useAuth.
+      // Let's actually look at useAuth first.
+    }
+
     if (user) {
       fetchData();
     }
   }, [user, activeTab]);
 
-  if (loading) return (
+  // FIXME: The useAuth hook controls the user state. We should actually update useAuth.ts
+  // But for a quick fix in App.tsx to bypass login:
+  const isDemo = localStorage.getItem('demo_mode') === 'true';
+
+  if (loading && !isDemo) return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
     </div>
   );
 
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user && !isDemo) return <Navigate to="/login" replace />;
+
+  // If in demo mode and no user, we render with mock data
+  const currentUser = user || (isDemo ? { name: 'Demo User', email: 'demo@example.com', id: 999 } : null);
 
   const statCards = [
     { label: 'Total Emails', value: stats.total, icon: BarChart3, color: 'bg-blue-500' },
@@ -76,7 +93,7 @@ const Dashboard = () => {
         <header className="flex justify-between items-center mb-10">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white tracking-tight">Dashboard</h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">Welcome back, {user?.name}</p>
+            <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">Welcome back, {currentUser?.name}</p>
           </div>
 
           <motion.button
