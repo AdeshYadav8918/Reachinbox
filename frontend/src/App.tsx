@@ -25,9 +25,7 @@ const Dashboard = () => {
         ? '/api/campaigns/emails/scheduled'
         : '/api/campaigns/emails/sent';
       const res = await api.get(endpoint);
-      setEmails(res.data.emails);
-
-      setEmails(res.data.emails);
+      setEmails(res.data.emails || []);
 
       // Fetch stats from backend
       const statsRes = await api.get('/api/campaigns/stats');

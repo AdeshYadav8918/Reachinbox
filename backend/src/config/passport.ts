@@ -14,7 +14,7 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        const user = await findOrCreateUser(profile);
+        const user = await findOrCreateUser(profile as any);
         return done(null, user);
       } catch (error) {
         logger.error('Google OAuth error:', error);
