@@ -2,9 +2,18 @@ import { authAPI } from '../../services/api';
 import { CardBody, CardContainer, CardItem } from '../ui/3d-card';
 import { Mail } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 export const LoginPage = () => {
-    const { loginAsGuest } = useAuth();
+    const { loginAsGuest, user } = useAuth();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user) {
+            navigate('/dashboard', { replace: true });
+        }
+    }, [user, navigate]);
 
     const handleGoogleLogin = () => {
         window.location.href = authAPI.loginUrl;
